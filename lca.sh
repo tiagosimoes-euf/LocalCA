@@ -34,24 +34,47 @@ echo -e "\n+---------+"
 echo -e "| \033[1mLocalCA\033[0m |"
 echo -e "+---------+\n"
 
-# CHECK VARS
+# Check the main variables
 
 echo -e "Checking configuration...\n"
 echo -e "Prefix for root key and certificate:         ${LCAPREFIX}"
 echo -e "Path to export the root certificate:         ${ROOTEXPORTPATH}"
 echo -e "Path to export the new certificates:         ${CERTEXPORTPATH}"
 
-# CHECK ROOT KEY
+# Check for an existing root key
 ROOTKEY="${LCAPREFIX}.key"
 
 if [[ -f ${ROOTEXPORTPATH}/${ROOTKEY} ]]; then
-  echo -e "\nKey exists for the root certificate:         \
+  echo -e "\nKey exists for the root certificate:       \
   ${ROOTEXPORTPATH}/${ROOTKEY}"
 else
   echo -e "\nNo root key is present."
+
+  # Prompt to proceed with creating a root key
+  echo
+  while true; do
+    read -p "Do you wish to create a root key? [Y/N] " yn
+    case $yn in
+      [Yy]* )
+        echo -e "\n\
+You will be asked for a passphrase when creating the key."
+        echo -e "\
+This passphrase is needed to sign new certificates with this key, \
+\033[1mso don't lose it!\033[0m\n"
+        read -p "Press Enter to continue..."
+        openssl genrsa -des3 -out ${ROOTEXPORTPATH}/${ROOTKEY} 2048
+        break
+        ;;
+      [Nn]* )
+        echo "Bye!"
+        exit 0
+        ;;
+      * ) echo "Please answer yes or no.";;
+    esac
+  done
 fi
 
-# CHECK ROOT CERT
+# Check for an existing root certificate
 ROOTPEM="${LCAPREFIX}.pem"
 ROOTCRT="${LCAPREFIX}.crt"
 
@@ -63,6 +86,24 @@ elif [[ -f ${ROOTEXPORTPATH}/${ROOTCRT} ]]; then
   ${ROOTEXPORTPATH}/${ROOTCRT}"
 else
   echo -e "\nNo root certificate is present."
+
+  # Prompt to proceed with creating a root certificate
+  echo
+  while true; do
+    read -p "Do you wish to create a root certificate? [Y/N] " yn
+    case $yn in
+      [Yy]* )
+        #
+
+        break
+        ;;
+      [Nn]* )
+        echo "Bye!"
+        exit 0
+        ;;
+      * ) echo "Please answer yes or no.";;
+    esac
+  done
 fi
 
 
