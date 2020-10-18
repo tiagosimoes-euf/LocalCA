@@ -23,8 +23,8 @@ First grab the script and have a look at what is included:
 
 Copy the example config file and edit the active config file.
 
-    cp example.ca.cfg ca.cfg
-    nano ca.cfg
+    cp example.lca.cfg lca.cfg
+    nano lca.cfg
 
 Make the main script and the helper scripts executable.
 

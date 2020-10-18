@@ -2,8 +2,8 @@
 
 # Set the main variables
 SCRIPTPATH=$(dirname $(realpath $0))
-CONFIGEXAMPLE='example.ca.cfg'
-CONFIGFILE='ca.cfg'
+CONFIGEXAMPLE='example.lca.cfg'
+CONFIGFILE='lca.cfg'
 
 # Assert a configuration file
 if [[ ! -f ${SCRIPTPATH}/${CONFIGFILE} ]]; then
