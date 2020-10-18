@@ -21,12 +21,15 @@ First grab the script and have a look at what is included:
     git clone https://github.com/tiagosimoes-euf/LocalCA.git
     cd LocalCA/ && ls -hAl
 
-Copy the example config file and edit the active config file.
+Copy the example config file and edit the active config file:
 
     cp example.lca.cfg lca.cfg
     nano lca.cfg
 
-Make the main script and the helper scripts executable.
+Make the script executable and put it somewhere in your `$PATH`:
+
+    chmod a+x lca.sh
+    sudo ln -s ${PWD}/lca.sh /usr/local/bin/lca
 
 ## Usage
 
