@@ -4,7 +4,6 @@
 SCRIPTPATH=$(dirname $(realpath $0))
 CONFIGEXAMPLE='example.ca.cfg'
 CONFIGFILE='ca.cfg'
-LOGPATH=${SCRIPTPATH}/'log'
 
 # Assert a configuration file
 if [[ ! -f ${SCRIPTPATH}/${CONFIGFILE} ]]; then
@@ -14,7 +13,21 @@ fi
 # Import configuration
 source ${SCRIPTPATH}/${CONFIGFILE}
 
-#
+# Assert a certs directory
+if [[ ! -d ${CERTEXPORTPATH} ]]; then
+  mkdir -p ${CERTEXPORTPATH}
+fi
+
+# Check for a root CA directory definition or use a default
+if [[ ! ${ROOTEXPORTPATH} ]]; then
+  ROOTEXPORTPATH=${CERTEXPORTPATH}/${LCANAME}
+fi
+
+# Assert a root CA directory
+if [[ ! -d ${ROOTEXPORTPATH} ]]; then
+  mkdir -p ${ROOTEXPORTPATH}
+fi
+
 
 # TESTING
 
