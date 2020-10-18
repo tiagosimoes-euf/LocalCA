@@ -29,26 +29,24 @@ if [[ ! -d ${ROOTEXPORTPATH} ]]; then
 fi
 
 # START
-
 echo -e "\n+---------+"
 echo -e "| \033[1mLocalCA\033[0m |"
 echo -e "+---------+\n"
 
 # Check the main variables
-
 echo -e "Checking configuration...\n"
-echo -e "Prefix for root key and certificate:         ${LCAPREFIX}"
-echo -e "Path to export the root certificate:         ${ROOTEXPORTPATH}"
-echo -e "Path to export the new certificates:         ${CERTEXPORTPATH}"
+echo -e "Certificate Authority name:  ${LCAPREFIX}"
+echo -e "Path for root certificate:   ${ROOTEXPORTPATH}"
+echo -e "Path for new certificates:   ${CERTEXPORTPATH}"
 
 # Check for an existing root key
 ROOTKEY="${LCAPREFIX}.key"
 
 if [[ -f ${ROOTEXPORTPATH}/${ROOTKEY} ]]; then
-  echo -e "\nKey exists for the root certificate:       \
-  ${ROOTEXPORTPATH}/${ROOTKEY}"
+  echo -e "\n\033[42m[success]\033[0m Key exists for the root certificate:"
+  echo -e "\n${ROOTEXPORTPATH}/${ROOTKEY}"
 else
-  echo -e "\nNo root key is present."
+  echo -e "\n\033[43m[notice]\033[0m No root key is present."
 
   # Prompt to proceed with creating a root key
   echo
@@ -56,20 +54,26 @@ else
     read -p "Do you wish to create a root key? [Y/N] " yn
     case $yn in
       [Yy]* )
-        echo -e "\n\
-You will be asked for a passphrase when creating the key."
-        echo -e "\
+        echo -e "\n\033[43m[notice]\033[0m \
+You will be asked for a passphrase when creating the key. \
 This passphrase is needed to sign new certificates with this key, \
 \033[1mso don't lose it!\033[0m\n"
         read -p "Press Enter to continue..."
+        echo
+
+        # Generate the root key
         openssl genrsa -des3 -out ${ROOTEXPORTPATH}/${ROOTKEY} 2048
+        echo -e "\n\033[42m[success]\033[0m Generated root key:"
+        echo -e "\n${ROOTEXPORTPATH}/${ROOTKEY}"
         break
         ;;
+
       [Nn]* )
-        echo "Bye!"
+        echo -e "\nBye!"
         exit 0
         ;;
-      * ) echo "Please answer yes or no.";;
+
+      * ) echo -e "\n\033[41m[error]\033[0m Please answer yes or no.\n";;
     esac
   done
 fi
@@ -79,13 +83,13 @@ ROOTPEM="${LCAPREFIX}.pem"
 ROOTCRT="${LCAPREFIX}.crt"
 
 if [[ -f ${ROOTEXPORTPATH}/${ROOTPEM} ]]; then
-  echo -e "\nRoot certificate (PEM) already exists:       \
-  ${ROOTEXPORTPATH}/${ROOTPEM}"
+  echo -e "\n\033[42m[success]\033[0m Root certificate (PEM) already exists:"
+  echo -e "\n${ROOTEXPORTPATH}/${ROOTPEM}"
 elif [[ -f ${ROOTEXPORTPATH}/${ROOTCRT} ]]; then
-  echo -e "\nRoot certificate (CRT) already exists:       \
-  ${ROOTEXPORTPATH}/${ROOTCRT}"
+  echo -e "\n\033[42m[success]\033[0m Root certificate (CRT) already exists:"
+  echo -e "\n${ROOTEXPORTPATH}/${ROOTCRT}"
 else
-  echo -e "\nNo root certificate is present."
+  echo -e "\n\033[43m[notice]\033[0m No root certificate is present."
 
   # Prompt to proceed with creating a root certificate
   echo
@@ -93,15 +97,50 @@ else
     read -p "Do you wish to create a root certificate? [Y/N] " yn
     case $yn in
       [Yy]* )
-        #
+        echo -e "\nThe certificate will be created with the following values:"
+        echo -e "\n\033[1m[Subject values]\033[0m"
+        echo -e "Country Name (2 letter code):                 ${S_C}"
+        echo -e "State or Province Name (full name):           ${S_ST}"
+        echo -e "Locality Name (eg, city):                     ${S_L}"
+        echo -e "Organization Name (eg, company):              ${S_O}"
+        echo -e "Organizational Unit Name (eg, section):       ${S_OU}"
+        echo -e "Common Name (e.g. server FQDN or YOUR name):  ${S_CN}"
 
+        # Prompt to confirm certificate subject variables
+        echo
+        while true; do
+          read -p "Are these values correct? [Y/N] " yn
+          case $yn in
+            [Yy]* )
+
+              # Generate the root certificate (PEM)
+              openssl req -x509 -new -nodes -key ${ROOTEXPORTPATH}/${ROOTKEY} \
+              -sha256 -days 1825 -out ${ROOTEXPORTPATH}/${ROOTPEM} -subj \
+              "/C=${S_C}/ST=${S_ST}/L=${S_L}/O=${S_O}/OU=${S_OU}/CN=${S_CN}"
+              echo -e "\n\033[42m[success]\033[0m Generated root certificate:"
+              echo -e "\n${ROOTEXPORTPATH}/${ROOTPEM}"
+              break
+              ;;
+
+            [Nn]* )
+              echo -e "\n\033[43m[notice]\033[0m Interrupted!"
+              echo -e "\nEdit ${CONFIGFILE} and run the script again."
+              echo -e "\nBye!"
+              exit 0
+              ;;
+
+            * ) echo -e "\n\033[41m[error]\033[0m Please answer yes or no.\n";;
+          esac
+        done
         break
         ;;
+
       [Nn]* )
-        echo "Bye!"
+        echo -e "\nBye!"
         exit 0
         ;;
-      * ) echo "Please answer yes or no.";;
+
+      * ) echo -e "\n\033[41m[error]\033[0m Please answer yes or no.\n";;
     esac
   done
 fi
@@ -109,11 +148,3 @@ fi
 
 echo ""
 read -p "Press Enter to continue..."
-
-echo -e "\n[Subject variables]"
-echo -e "Country Name (2 letter code):                ${SUBJ_C}"
-echo -e "State or Province Name (full name):          ${SUBJ_ST}"
-echo -e "Locality Name (eg, city):                    ${SUBJ_L}"
-echo -e "Organization Name (eg, company):             ${SUBJ_O}"
-echo -e "Organizational Unit Name (eg, section):      ${SUBJ_OU}"
-echo -e "Common Name (e.g. server FQDN or YOUR name): ${SUBJ_CN}"
