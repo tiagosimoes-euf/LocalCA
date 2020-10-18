@@ -20,7 +20,7 @@ fi
 
 # Check for a root CA directory definition or use a default
 if [[ ! ${ROOTEXPORTPATH} ]]; then
-  ROOTEXPORTPATH=${CERTEXPORTPATH}/${LCANAME}
+  ROOTEXPORTPATH=${CERTEXPORTPATH}/${LCAPREFIX}
 fi
 
 # Assert a root CA directory
@@ -28,12 +28,46 @@ if [[ ! -d ${ROOTEXPORTPATH} ]]; then
   mkdir -p ${ROOTEXPORTPATH}
 fi
 
+# START
 
-# TESTING
+echo -e "\n+---------+"
+echo -e "| \033[1mLocalCA\033[0m |"
+echo -e "+---------+\n"
 
-echo -e "Name for root key and root certificate:      ${LCANAME}"
+# CHECK VARS
+
+echo -e "Checking configuration...\n"
+echo -e "Prefix for root key and certificate:         ${LCAPREFIX}"
 echo -e "Path to export the root certificate:         ${ROOTEXPORTPATH}"
 echo -e "Path to export the new certificates:         ${CERTEXPORTPATH}"
+
+# CHECK ROOT KEY
+ROOTKEY="${LCAPREFIX}.key"
+
+if [[ -f ${ROOTEXPORTPATH}/${ROOTKEY} ]]; then
+  echo -e "\nKey exists for the root certificate:         \
+  ${ROOTEXPORTPATH}/${ROOTKEY}"
+else
+  echo -e "\nNo root key is present."
+fi
+
+# CHECK ROOT CERT
+ROOTPEM="${LCAPREFIX}.pem"
+ROOTCRT="${LCAPREFIX}.crt"
+
+if [[ -f ${ROOTEXPORTPATH}/${ROOTPEM} ]]; then
+  echo -e "\nRoot certificate (PEM) already exists:       \
+  ${ROOTEXPORTPATH}/${ROOTPEM}"
+elif [[ -f ${ROOTEXPORTPATH}/${ROOTCRT} ]]; then
+  echo -e "\nRoot certificate (CRT) already exists:       \
+  ${ROOTEXPORTPATH}/${ROOTCRT}"
+else
+  echo -e "\nNo root certificate is present."
+fi
+
+
+echo ""
+read -p "Press Enter to continue..."
 
 echo -e "\n[Subject variables]"
 echo -e "Country Name (2 letter code):                ${SUBJ_C}"
