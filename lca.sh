@@ -150,11 +150,20 @@ read -p "Press Enter to continue..."
 
 echo -e "\n\033[43m[notice]\033[0m \
 This root certificate must be added \033[1mmanually\033[0m to your browser(s)."
-echo -e "\n\
-On Firefox, type \033[36mabout:preferences#privacy\033[0m in the address bar;\
+
+echo -e "\nOn Firefox,\
+\n  type \033[36mabout:preferences#privacy\033[0m in the address bar;\
 \n  scroll to the end of the page and click on \033[1mView certificates\033[0m;\
 \n  in the Certificate Manager > Authorities, click on \033[1mImport...\033[0m;\
 \n  navigate to \033[36m${ROOTEXPORTPATH}\033[0m;\
 \n  select the root certificate \033[36m${ROOTPEM}\033[0m;\
 \n  check \"Trust this CA to identify websites\" and click \033[1mOK\033[0m;\
 \n  this CA is now listed under \033[36m${S_O}\033[0m."
+
+echo -e "\nOn Chrome / Chromium,\
+\n  type \033[36mchrome://settings/certificates\033[0m in the address bar;\
+\n  in the Authorities tab, click on \033[1mImport\033[0m;\
+\n  navigate to \033[36m${ROOTEXPORTPATH}\033[0m;\
+\n  select the root certificate \033[36m${ROOTPEM}\033[0m;\
+\n  check \"Trust this CA to identify websites\" and click \033[1mOK\033[0m;\
+\n  this CA is now listed under \033[36morg-${S_O}\033[0m."
