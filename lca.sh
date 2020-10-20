@@ -29,22 +29,22 @@ if [[ ! -d ${ROOTEXPORTPATH} ]]; then
 fi
 
 # START
-echo -e "\n+---------+"
-echo -e "| \033[1mLocalCA\033[0m |"
-echo -e "+---------+\n"
+echo -e "\n+-----------------------------+"
+echo -e "| \033[1mLocal \033[1mC\033[0mertificate \033[1mA\033[0muthority |"
+echo -e "+-----------------------------+\n"
 
 # Check the main variables
-echo -e "Checking configuration...\n"
-echo -e "Certificate Authority name:  ${LCAPREFIX}"
-echo -e "Path for root certificate:   ${ROOTEXPORTPATH}"
-echo -e "Path for new certificates:   ${CERTEXPORTPATH}"
+echo -e "\033[1mChecking configuration...\033[0m\n"
+echo -e "Certificate Authority name:  \033[36m${LCAPREFIX}\033[0m"
+echo -e "Path for root certificate:   \033[36m${ROOTEXPORTPATH}\033[0m"
+echo -e "Path for new certificates:   \033[36m${CERTEXPORTPATH}\033[0m"
 
 # Check for an existing root key
 ROOTKEY="${LCAPREFIX}.key"
 
 if [[ -f ${ROOTEXPORTPATH}/${ROOTKEY} ]]; then
   echo -e "\n\033[42m[success]\033[0m Key exists for the root certificate:"
-  echo -e "\n${ROOTEXPORTPATH}/${ROOTKEY}"
+  echo -e "\n\033[36m${ROOTEXPORTPATH}/${ROOTKEY}\033[0m"
 else
   echo -e "\n\033[43m[notice]\033[0m No root key is present."
 
@@ -64,12 +64,12 @@ This passphrase is needed to sign new certificates with this key, \
         # Generate the root key
         openssl genrsa -des3 -out ${ROOTEXPORTPATH}/${ROOTKEY} 2048
         echo -e "\n\033[42m[success]\033[0m Generated root key:"
-        echo -e "\n${ROOTEXPORTPATH}/${ROOTKEY}"
+        echo -e "\n\033[36m${ROOTEXPORTPATH}/${ROOTKEY}\033[0m"
         break
         ;;
 
       [Nn]* )
-        echo -e "\nBye!"
+        echo -e "\n\033[1mBye!\033[0m"
         exit 0
         ;;
 
@@ -84,10 +84,10 @@ ROOTCRT="${LCAPREFIX}.crt"
 
 if [[ -f ${ROOTEXPORTPATH}/${ROOTPEM} ]]; then
   echo -e "\n\033[42m[success]\033[0m Root certificate (PEM) already exists:"
-  echo -e "\n${ROOTEXPORTPATH}/${ROOTPEM}"
+  echo -e "\n\033[36m${ROOTEXPORTPATH}/${ROOTPEM}\033[0m"
 elif [[ -f ${ROOTEXPORTPATH}/${ROOTCRT} ]]; then
   echo -e "\n\033[42m[success]\033[0m Root certificate (CRT) already exists:"
-  echo -e "\n${ROOTEXPORTPATH}/${ROOTCRT}"
+  echo -e "\n\033[36m${ROOTEXPORTPATH}/${ROOTCRT}\033[0m"
 else
   echo -e "\n\033[43m[notice]\033[0m No root certificate is present."
 
@@ -118,14 +118,14 @@ else
               -sha256 -days 1825 -out ${ROOTEXPORTPATH}/${ROOTPEM} -subj \
               "/C=${S_C}/ST=${S_ST}/L=${S_L}/O=${S_O}/OU=${S_OU}/CN=${S_CN}"
               echo -e "\n\033[42m[success]\033[0m Generated root certificate:"
-              echo -e "\n${ROOTEXPORTPATH}/${ROOTPEM}"
+              echo -e "\n\033[36m${ROOTEXPORTPATH}/${ROOTPEM}\033[0m"
               break
               ;;
 
             [Nn]* )
               echo -e "\n\033[43m[notice]\033[0m Interrupted!"
               echo -e "\nEdit ${CONFIGFILE} and run the script again."
-              echo -e "\nBye!"
+              echo -e "\n\033[1mBye!\033[0m"
               exit 0
               ;;
 
@@ -136,7 +136,7 @@ else
         ;;
 
       [Nn]* )
-        echo -e "\nBye!"
+        echo -e "\n\033[1mBye!\033[0m"
         exit 0
         ;;
 
@@ -167,3 +167,8 @@ echo -e "\nOn Chrome / Chromium,\
 \n  select the root certificate \033[36m${ROOTPEM}\033[0m;\
 \n  check \"Trust this CA to identify websites\" and click \033[1mOK\033[0m;\
 \n  this CA is now listed under \033[36morg-${S_O}\033[0m."
+
+echo ""
+read -p "Press Enter to continue..."
+
+echo -e "\n\033[1mBye!\033[0m"
